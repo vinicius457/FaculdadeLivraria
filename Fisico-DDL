@@ -1,126 +1,184 @@
+/* Lógico_1: */
+
 CREATE TABLE Livro (
     isbn SERIAL PRIMARY KEY,
-    nome VARCHAR
+    nome VARCHAR,
+    fk_Professor_id_usuario SERIAL,
+    fk_Aluno_id_usuario SERIAL,
+    data_compra VARCHAR,
+    valor FLOAT
 );
 
 CREATE TABLE Mensalidade (
     data_vencimento VARCHAR,
     valor FLOAT,
     data_pagamento SERIAL PRIMARY KEY,
-    fk_Inscricao_tipo_plano SERIAL
+    fk_Aluno_id_usuario SERIAL
 );
 
 CREATE TABLE Aluno (
     ra VARCHAR,
-    id SERIAL PRIMARY KEY,
+    tipo_plano CHAR,
+    id_usuario SERIAL PRIMARY KEY,
     nome VARCHAR(100),
     numero VARCHAR(100),
     email VARCHAR(100),
     idade INTEGER,
-    fk_Inscricao_tipo_plano SERIAL
-);
-
-CREATE TABLE Inscricao (
-    tipo_plano SERIAL PRIMARY KEY
+    sexo CHAR,
+    cpf VARCHAR
 );
 
 CREATE TABLE Professor (
     salario FLOAT,
     cargo VARCHAR(50),
-    id SERIAL PRIMARY KEY,
+    id_usuario SERIAL PRIMARY KEY,
     nome VARCHAR(100),
     numero VARCHAR(100),
     email VARCHAR(100),
-    idade INTEGER
+    idade INTEGER,
+    sexo CHAR,
+    cpf VARCHAR
 );
 
 CREATE TABLE Semestre (
-    id SERIAL PRIMARY KEY,
-    aberto BOOLEAN
+    id_semestre SERIAL PRIMARY KEY,
+    tempo_semestre BOOLEAN
 );
 
 CREATE TABLE Questao (
-    id SERIAL PRIMARY KEY,
+    id_questao SERIAL PRIMARY KEY,
     nivel VARCHAR,
     texto VARCHAR
 );
 
 CREATE TABLE Disciplina (
-    id SERIAL PRIMARY KEY,
+    id_disciplina SERIAL PRIMARY KEY,
     qtd_turmas INT
 );
 
 CREATE TABLE Aula (
-    id SERIAL PRIMARY KEY,
+    id_aula SERIAL PRIMARY KEY,
     ordem INT,
     categoria CHAR(1)
 );
 
 CREATE TABLE Autor (
-    nome SERIAL PRIMARY KEY,
+    nome_autor SERIAL PRIMARY KEY,
     idade INT
 );
 
 CREATE TABLE turma_faz_parte_Aula_Professor_Disciplina_Semestre (
-    id SERIAL PRIMARY KEY,
+    id_turma SERIAL PRIMARY KEY,
     turno VARCHAR,
-    fk_Aula_id SERIAL,
-    fk_Professor_id SERIAL,
-    fk_Disciplina_id SERIAL,
-    fk_Semestre_id SERIAL
+    fk_Aula_id_aula SERIAL,
+    fk_Professor_id_usuario SERIAL,
+    fk_Disciplina_id_disciplina SERIAL,
+    fk_Semestre_id_semestre SERIAL
+);
+
+CREATE TABLE Departamento_de_excursao (
+    id_dep_visita VARCHAR PRIMARY KEY,
+    vagas_dispo INT,
+    data_visita VARCHAR,
+    custo_visita FLOAT,
+    lugar VARCHAR,
+    fk_Professor_id_usuario SERIAL,
+    fk_Aluno_id_usuario SERIAL
+);
+
+CREATE TABLE Guia_de_visita (
+    id_guia VARCHAR PRIMARY KEY,
+    cpf VARCHAR,
+    dt_nasc_guia VARCHAR,
+    primeiro_nome_guia VARCHAR,
+    sobrenome_guia VARCHAR,
+    sexo CHAR,
+    fk_Departamento_de_excursao_id_dep_visita VARCHAR
+);
+
+CREATE TABLE Lanchonete (
+    oferta_do_dia VARCHAR,
+    id_lanchonete VARCHAR PRIMARY KEY,
+    tipo_pagamento VARCHAR
 );
 
 CREATE TABLE Tem (
-    fk_Autor_nome SERIAL,
+    fk_Autor_nome_autor SERIAL,
     fk_Livro_isbn SERIAL
 );
 
 CREATE TABLE Emprestimo (
-    fk_Professor_id SERIAL,
-    fk_Aluno_id SERIAL,
+    fk_Professor_id_usuario SERIAL,
+    fk_Aluno_id_usuario SERIAL,
     fk_Livro_isbn SERIAL,
     data_emprestimo VARCHAR,
     data_devolucao VARCHAR,
-    id SERIAL PRIMARY KEY,
+    id_emprestimo SERIAL PRIMARY KEY,
     valor_multa NUMERIC(11,2),
     tem_multa BOOLEAN
 );
 
 CREATE TABLE faz_parte_Questao_Aluno_turma (
-    fk_Questao_id SERIAL,
-    fk_Aluno_id SERIAL,
-    fk_turma_faz_parte_Aula_Professor_Disciplina_Semestre_id SERIAL
+    fk_Questao_id_questao SERIAL,
+    fk_Aluno_id_usuario SERIAL,
+    fk_turma_faz_parte_Aula_Professor_Disciplina_Semestre_id_turma SERIAL
 );
+
+CREATE TABLE Compra_na (
+    fk_Professor_id_usuario SERIAL,
+    fk_Aluno_id_usuario SERIAL,
+    fk_Lanchonete_id_lanchonete VARCHAR
+);
+
+ ALTER TABLE Livro ADD CONSTRAINT FK_Livro_2
+    FOREIGN KEY (fk_Professor_id_usuario)
+    REFERENCES Professor (id_usuario)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE Livro ADD CONSTRAINT FK_Livro_3
+    FOREIGN KEY (fk_Aluno_id_usuario)
+    REFERENCES Aluno (id_usuario)
+    ON DELETE CASCADE;
  
 ALTER TABLE Mensalidade ADD CONSTRAINT FK_Mensalidade_2
-    FOREIGN KEY (fk_Inscricao_tipo_plano)
-    REFERENCES Inscricao (tipo_plano)
-    ON DELETE RESTRICT;
- 
-ALTER TABLE Aluno ADD CONSTRAINT FK_Aluno_2
-    FOREIGN KEY (fk_Inscricao_tipo_plano)
-    REFERENCES Inscricao (tipo_plano)
+    FOREIGN KEY (fk_Aluno_id_usuario)
+    REFERENCES Aluno (id_usuario)
     ON DELETE RESTRICT;
  
 ALTER TABLE turma_faz_parte_Aula_Professor_Disciplina_Semestre ADD CONSTRAINT FK_turma_faz_parte_Aula_Professor_Disciplina_Semestre_2
-    FOREIGN KEY (fk_Aula_id)
-    REFERENCES Aula (id);
+    FOREIGN KEY (fk_Aula_id_aula)
+    REFERENCES Aula (id_aula);
  
 ALTER TABLE turma_faz_parte_Aula_Professor_Disciplina_Semestre ADD CONSTRAINT FK_turma_faz_parte_Aula_Professor_Disciplina_Semestre_3
-    FOREIGN KEY (fk_Professor_id)
-    REFERENCES Professor (id);
+    FOREIGN KEY (fk_Professor_id_usuario)
+    REFERENCES Professor (id_usuario);
  
 ALTER TABLE turma_faz_parte_Aula_Professor_Disciplina_Semestre ADD CONSTRAINT FK_turma_faz_parte_Aula_Professor_Disciplina_Semestre_4
-    FOREIGN KEY (fk_Disciplina_id)
-    REFERENCES Disciplina (id);
+    FOREIGN KEY (fk_Disciplina_id_disciplina)
+    REFERENCES Disciplina (id_disciplina);
  
 ALTER TABLE turma_faz_parte_Aula_Professor_Disciplina_Semestre ADD CONSTRAINT FK_turma_faz_parte_Aula_Professor_Disciplina_Semestre_5
-    FOREIGN KEY (fk_Semestre_id)
-    REFERENCES Semestre (id);
+    FOREIGN KEY (fk_Semestre_id_semestre)
+    REFERENCES Semestre (id_semestre);
+ 
+ALTER TABLE Departamento_de_excursao ADD CONSTRAINT FK_Departamento_de_excursao_2
+    FOREIGN KEY (fk_Professor_id_usuario)
+    REFERENCES Professor (id_usuario)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE Departamento_de_excursao ADD CONSTRAINT FK_Departamento_de_excursao_3
+    FOREIGN KEY (fk_Aluno_id_usuario)
+    REFERENCES Aluno (id_usuario)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE Guia_de_visita ADD CONSTRAINT FK_Guia_de_visita_2
+    FOREIGN KEY (fk_Departamento_de_excursao_id_dep_visita)
+    REFERENCES Departamento_de_excursao (id_dep_visita)
+    ON DELETE CASCADE;
  
 ALTER TABLE Tem ADD CONSTRAINT FK_Tem_1
-    FOREIGN KEY (fk_Autor_nome)
-    REFERENCES Autor (nome)
+    FOREIGN KEY (fk_Autor_nome_autor)
+    REFERENCES Autor (nome_autor)
     ON DELETE RESTRICT;
  
 ALTER TABLE Tem ADD CONSTRAINT FK_Tem_2
@@ -129,13 +187,13 @@ ALTER TABLE Tem ADD CONSTRAINT FK_Tem_2
     ON DELETE RESTRICT;
  
 ALTER TABLE Emprestimo ADD CONSTRAINT FK_Emprestimo_2
-    FOREIGN KEY (fk_Professor_id)
-    REFERENCES Professor (id)
+    FOREIGN KEY (fk_Professor_id_usuario)
+    REFERENCES Professor (id_usuario)
     ON DELETE RESTRICT;
  
 ALTER TABLE Emprestimo ADD CONSTRAINT FK_Emprestimo_3
-    FOREIGN KEY (fk_Aluno_id)
-    REFERENCES Aluno (id)
+    FOREIGN KEY (fk_Aluno_id_usuario)
+    REFERENCES Aluno (id_usuario)
     ON DELETE RESTRICT;
  
 ALTER TABLE Emprestimo ADD CONSTRAINT FK_Emprestimo_4
@@ -144,16 +202,34 @@ ALTER TABLE Emprestimo ADD CONSTRAINT FK_Emprestimo_4
     ON DELETE RESTRICT;
  
 ALTER TABLE faz_parte_Questao_Aluno_turma ADD CONSTRAINT FK_faz_parte_Questao_Aluno_turma_1
-    FOREIGN KEY (fk_Questao_id)
-    REFERENCES Questao (id)
+    FOREIGN KEY (fk_Questao_id_questao)
+    REFERENCES Questao (id_questao)
     ON DELETE NO ACTION;
  
 ALTER TABLE faz_parte_Questao_Aluno_turma ADD CONSTRAINT FK_faz_parte_Questao_Aluno_turma_2
-    FOREIGN KEY (fk_Aluno_id)
-    REFERENCES Aluno (id)
+    FOREIGN KEY (fk_Aluno_id_usuario)
+    REFERENCES Aluno (id_usuario)
     ON DELETE NO ACTION;
  
 ALTER TABLE faz_parte_Questao_Aluno_turma ADD CONSTRAINT FK_faz_parte_Questao_Aluno_turma_3
-    FOREIGN KEY (fk_turma_faz_parte_Aula_Professor_Disciplina_Semestre_id)
-    REFERENCES turma_faz_parte_Aula_Professor_Disciplina_Semestre (id)
+    FOREIGN KEY (fk_turma_faz_parte_Aula_Professor_Disciplina_Semestre_id_turma)
+    REFERENCES turma_faz_parte_Aula_Professor_Disciplina_Semestre (id_turma)
     ON DELETE NO ACTION;
+ 
+ALTER TABLE Compra_na ADD CONSTRAINT FK_Compra_na_1
+    FOREIGN KEY (fk_Professor_id_usuario)
+    REFERENCES Professor (id_usuario)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE Compra_na ADD CONSTRAINT FK_Compra_na_2
+    FOREIGN KEY (fk_Aluno_id_usuario)
+    REFERENCES Aluno (id_usuario)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE Compra_na ADD CONSTRAINT FK_Compra_na_3
+    FOREIGN KEY (fk_Lanchonete_id_lanchonete)
+    REFERENCES Lanchonete (id_lanchonete)
+    ON DELETE SET NULL;
+
+   
+
