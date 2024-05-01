@@ -1,12 +1,8 @@
-/* Lógico_1: */
-
 CREATE TABLE Livro (
     isbn SERIAL PRIMARY KEY,
     nome VARCHAR,
     fk_Professor_id_usuario SERIAL,
-    fk_Aluno_id_usuario SERIAL,
-    data_compra VARCHAR,
-    valor FLOAT
+    fk_Aluno_id_usuario SERIAL
 );
 
 CREATE TABLE Mensalidade (
@@ -39,171 +35,66 @@ CREATE TABLE Professor (
     sexo CHAR,
     cpf VARCHAR
 );
-
-CREATE TABLE Semestre (
-    id_semestre SERIAL PRIMARY KEY,
-    tempo_semestre BOOLEAN
-);
-
 CREATE TABLE Questao (
     id_questao SERIAL PRIMARY KEY,
     nivel VARCHAR,
-    texto VARCHAR
+    texto VARCHAR,
+    gabarito VARCHAR,
+    comentarios VARCHAR,
+    alternativas VARCHAR
 );
 
-CREATE TABLE Disciplina (
-    id_disciplina SERIAL PRIMARY KEY,
-    qtd_turmas INT
-);
+INSERT INTO Livro (isbn, nome, fk_Professor_id_usuario, fk_Aluno_id_usuario)
+VALUES (1, 'Livro 1', 1, 1),
+       (2, 'Livro 2', 2, 2);
+       
+INSERT INTO Mensalidade (data_vencimento, valor, data_pagamento, fk_Aluno_id_usuario)
+VALUES ('2024-04-30', 50.00, 1, 1),
+       ('2024-05-30', 50.00, 2, 2);
+       
+INSERT INTO Aluno (ra, tipo_plano, id_usuario, nome, numero, email, idade, sexo, cpf)
+VALUES ('123456', 'A', 1, 'João', '99999999', 'joao@example.com', 25, 'M', '123.456.789-01'),
+       ('789012', 'B', 2, 'Maria', '88888888', 'maria@example.com', 30, 'F', '987.654.321-09');
 
-CREATE TABLE Aula (
-    id_aula SERIAL PRIMARY KEY,
-    ordem INT,
-    categoria CHAR(1)
-);
+INSERT INTO Professor (salario, cargo, id_usuario, nome, numero, email, idade, sexo, cpf)
+VALUES (5000.00, 'Professor', 1, 'Carlos', '77777777', 'carlos@example.com', 35, 'M', '456.789.012-34'),
+       (6000.00, 'Coordenador', 2, 'Ana', '66666666', 'ana@example.com', 40, 'F', '654.321.098-76');
 
-CREATE TABLE Autor (
-    nome_autor SERIAL PRIMARY KEY,
-    idade INT
-);
+INSERT INTO Questao (nivel, texto, gabarito, comentarios, alternativas)
+VALUES ('Fácil', 'Qual é a capital do Brasil?', 'Brasília', 'Comentário sobre a questão', '{"a": "Rio de Janeiro", "b": "São Paulo", "c": "Brasília", "d": "Belo Horizonte"}'),
+       ('Médio', 'Quem pintou Mona Lisa?', 'Leonardo da Vinci', 'Comentário sobre a questão', '{"a": "Pablo Picasso", "b": "Vincent van Gogh", "c": "Leonardo da Vinci", "d": "Michelangelo"}');
 
-CREATE TABLE turma_faz_parte_Aula_Professor_Disciplina_Semestre (
-    id_turma SERIAL PRIMARY KEY,
-    turno VARCHAR,
-    fk_Aula_id_aula SERIAL,
-    fk_Professor_id_usuario SERIAL,
-    fk_Disciplina_id_disciplina SERIAL,
-    fk_Semestre_id_semestre SERIAL
-);
+UPDATE Livro
+SET nome = 'Novo Nome'
+WHERE isbn = 1;
 
-CREATE TABLE Departamento_de_excursao (
-    id_dep_visita VARCHAR PRIMARY KEY,
-    vagas_dispo INT,
-    data_visita VARCHAR,
-    custo_visita FLOAT,
-    lugar VARCHAR,
-    fk_Professor_id_usuario SERIAL,
-    fk_Aluno_id_usuario SERIAL
-);
+UPDATE Mensalidade
+SET valor = 60.00
+WHERE data_pagamento = 1;
 
-CREATE TABLE Guia_de_visita (
-    id_guia VARCHAR PRIMARY KEY,
-    cpf VARCHAR,
-    dt_nasc_guia VARCHAR,
-    primeiro_nome_guia VARCHAR,
-    sobrenome_guia VARCHAR,
-    sexo CHAR,
-    fk_Departamento_de_excursao_id_dep_visita VARCHAR
-);
+UPDATE Aluno
+SET idade = 26
+WHERE id_usuario = 1;
 
-CREATE TABLE Lanchonete (
-    oferta_do_dia VARCHAR,
-    id_lanchonete VARCHAR PRIMARY KEY,
-    tipo_pagamento VARCHAR
-);
+UPDATE Professor
+SET salario = 5500.00
+WHERE id_usuario = 1;
 
-CREATE TABLE Tem (
-    fk_Autor_nome_autor SERIAL,
-    fk_Livro_isbn SERIAL
-);
+UPDATE Questao
+SET nivel = 'Difícil'
+WHERE id_questao = 1;
 
-CREATE TABLE Emprestimo (
-    fk_Professor_id_usuario SERIAL,
-    fk_Aluno_id_usuario SERIAL,
-    fk_Livro_isbn SERIAL,
-    data_emprestimo VARCHAR,
-    data_devolucao VARCHAR,
-    id_emprestimo SERIAL PRIMARY KEY,
-    valor_multa NUMERIC(11,2),
-    tem_multa BOOLEAN
-);
+DELETE FROM Livro
+WHERE isbn = 2;
 
-CREATE TABLE faz_parte_Questao_Aluno_turma (
-    fk_Questao_id_questao SERIAL,
-    fk_Aluno_id_usuario SERIAL,
-    fk_turma_faz_parte_Aula_Professor_Disciplina_Semestre_id_turma SERIAL
-);
+DELETE FROM Mensalidade
+WHERE data_pagamento = 2;
 
-CREATE TABLE Compra_na (
-    fk_Professor_id_usuario SERIAL,
-    fk_Aluno_id_usuario SERIAL,
-    fk_Lanchonete_id_lanchonete VARCHAR
-);
+DELETE FROM Aluno
+WHERE id_usuario = 2;
 
- 
+DELETE FROM Professor
+WHERE id_usuario = 2;
 
-    -- Inserts para a tabela Livro
--- Inserts para a tabela Livro com fk_Aluno_id_usuario preenchido
-INSERT INTO Livro (nome, fk_Professor_id_usuario, fk_Aluno_id_usuario, data_compra, valor) 
-VALUES 
-('A Arte da Guerra', 1, 3, '2023-05-15', 29.99),
-('O Senhor dos Anéis', 6, 4, '2024-01-10', 35.50),
-('Dom Quixote', 2, 5, '2023-11-20', 20.00);
-
--- Inserts para a tabela Questao
-INSERT INTO Questao (nivel, texto) 
-VALUES 
-('Fácil', 'Qual é a capital do Brasil?'),
-('Intermediário', 'Quem escreveu "O Pequeno Príncipe"?'),
-('Difícil', 'Qual é a fórmula química da água?');
-
--- Inserts para a tabela Professor
-INSERT INTO Professor (salario, cargo, nome, numero, email, idade, sexo, cpf) 
-VALUES 
-(4500.00, 'Professor de História', 'João Silva', '555-1234', 'joao.silva@example.com', 40, 'M', '123.456.789-00'),
-(3800.00, 'Professor de Matemática', 'Maria Santos', '555-5678', 'maria.santos@example.com', 35, 'F', '987.654.321-00'),
-(5000.00, 'Professor de Literatura', 'Pedro Oliveira', '555-9101', 'pedro.oliveira@example.com', 45, 'M', '456.789.123-00');
-
--- Inserts para a tabela Mensalidade
-INSERT INTO Mensalidade (data_vencimento, valor, fk_Aluno_id_usuario) 
-VALUES 
-('2024-04-05', 200.00, 4),
-('2024-04-10', 150.00, 5),
-('2024-04-20', 180.00, 6);
--- Inserts para a tabela Aluno
-INSERT INTO Aluno (ra, tipo_plano, nome, numero, email, idade, sexo, cpf) 
-VALUES 
-('20230001', 'A', 'Ana Souza', '555-1111', 'ana.souza@example.com', 20, 'F', '111.222.333-00'),
-('20230002', 'B', 'Bruno Oliveira', '555-2222', 'bruno.oliveira@example.com', 22, 'M', '222.333.444-00'),
-('20230003', 'C', 'Carla Santos', '555-3333', 'carla.santos@example.com', 21, 'F', '333.444.555-00');
-
--- Update para a tabela Livro
-UPDATE Livro SET fk_Aluno_id_usuario = 2 WHERE nome = 'A Arte da Guerra';
-UPDATE Livro SET fk_Aluno_id_usuario = 1 WHERE nome = 'O Senhor dos Anéis';
-UPDATE Livro SET fk_Aluno_id_usuario = 3 WHERE nome = 'Dom Quixote';
-
--- Update para a tabela Questao
-UPDATE Questao SET nivel = 'Fácil' WHERE texto = 'Qual é a capital do Brasil?';
-UPDATE Questao SET nivel = 'Intermediário' WHERE texto = 'Quem escreveu "O Pequeno Príncipe"?';
-UPDATE Questao SET nivel = 'Difícil' WHERE texto = 'Qual é a fórmula química da água?';
-
--- Update para a tabela Professor
-UPDATE Professor SET salario = 4800.00 WHERE nome = 'João Silva';
-UPDATE Professor SET salario = 4200.00 WHERE nome = 'Maria Santos';
-UPDATE Professor SET salario = 5500.00 WHERE nome = 'Pedro Oliveira';
-
--- Update para a tabela Aluno
-UPDATE Aluno SET tipo_plano = 'A' WHERE nome = 'Ana Souza';
-UPDATE Aluno SET tipo_plano = 'B' WHERE nome = 'Bruno Oliveira';
-UPDATE Aluno SET tipo_plano = 'C' WHERE nome = 'Carla Santos';
-
--- Update para a tabela Mensalidade
-UPDATE Mensalidade SET data_vencimento = '2024-04-05', valor = 220.00 WHERE fk_Aluno_id_usuario = 4;
-UPDATE Mensalidade SET data_vencimento = '2024-04-10', valor = 180.00 WHERE fk_Aluno_id_usuario = 5;
-UPDATE Mensalidade SET data_vencimento = '2024-04-20', valor = 200.00 WHERE fk_Aluno_id_usuario = 6;
-
--- Delete de dados aleatórios da tabela Mensalidade
-DELETE FROM Mensalidade WHERE data_vencimento = '2024-04-05';
-
--- Delete de dados aleatórios da tabela Aluno
-DELETE FROM Aluno WHERE nome = 'Bruno Oliveira';
-
--- Delete de dados aleatórios da tabela Professor
-DELETE FROM Professor WHERE nome = 'Pedro Oliveira';
-
--- Delete de dados aleatórios da tabela Livro
-DELETE FROM Livro WHERE nome = 'Dom Quixote';
-
--- Delete de dados aleatórios da tabela Questao
-DELETE FROM Questao WHERE nivel = 'Fácil';
-
+DELETE FROM Questao
+WHERE id_questao = 2;
