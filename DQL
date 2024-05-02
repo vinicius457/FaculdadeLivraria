@@ -1,0 +1,49 @@
+SELECT COUNT(DISTINCT emprestador) AS total_compradores_de_livros
+FROM (
+    SELECT fk_Aluno_id_usuario AS emprestador
+    FROM Emprestimo
+    UNION
+    SELECT fk_Professor_id_usuario AS emprestador
+    FROM Emprestimo
+    UNION
+    SELECT fk_Aluno_id_usuario AS comprador
+    FROM Compra_na
+    UNION
+    SELECT fk_Professor_id_usuario AS comprador
+    FROM Compra_na
+) AS emprestadores_compradores;
+
+
+SELECT a.tipo_plano,
+       COUNT(*) AS total_alunos,
+       SUM(CASE WHEN m.data_pagamento IS NULL THEN 1 ELSE 0 END) AS inadimplentes
+FROM Aluno a
+LEFT JOIN Mensalidade m ON a.id_usuario = m.fk_Aluno_id_usuario
+GROUP BY a.tipo_plano;
+
+
+SELECT SUM(e.valor_multa) AS impacto_financeiro
+FROM Emprestimo e
+JOIN Professor p ON e.fk_Professor_id_usuario = p.id_usuario
+WHERE p.salario < (SELECT AVG(salario) FROM Professor);
+
+
+SELECT s.id_semestre, 
+       SUM(m.valor) AS total_mensalidades, 
+       SUM(d.custo_visita) AS total_custos_visita
+FROM Semestre s
+LEFT JOIN Mensalidade m ON s.id_semestre = m.fk_Semestre_id_semestre
+LEFT JOIN Departamento_de_excursao d ON s.id_semestre = d.fk_Semestre_id_semestre
+GROUP BY s.id_semestre
+HAVING SUM(m.valor) > SUM(d.custo_visita);
+
+
+SELECT a.nome_autor,
+       SUM(e.valor_multa) AS impacto_financeiro_multas,
+       COUNT(e.id_emprestimo) AS total_emprestimos,
+       AVG(e.valor_multa) AS media_multa_por_emprestimo
+FROM Emprestimo e
+JOIN Livro l ON e.fk_Livro_isbn = l.isbn
+JOIN Tem t ON l.isbn = t.fk_Livro_isbn
+JOIN Autor a ON t.fk_Autor_nome_autor = a.nome_autor
+GROUP BY a.nome_autor;
