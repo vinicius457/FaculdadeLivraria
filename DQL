@@ -47,3 +47,10 @@ JOIN Livro l ON e.fk_Livro_isbn = l.isbn
 JOIN Tem t ON l.isbn = t.fk_Livro_isbn
 JOIN Autor a ON t.fk_Autor_nome_autor = a.nome_autor
 GROUP BY a.nome_autor;
+
+--Após revisar as consultas e as estruturas das tabelas, 
+podemos afirmar que o esquema do banco de dados já está em conformidade com a Terceira Forma Normal (3NF).
+Todas as tabelas estão corretamente estruturadas, 
+com chaves primárias e estrangeiras adequadas, 
+e não há dependências transitivas presentes. 
+Portanto, não são necessárias modificações adicionais para atender à 3NF.
